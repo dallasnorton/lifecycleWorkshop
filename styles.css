@@ -1,0 +1,12 @@
+#responsiveContainer {
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+svg {
+	border: 1px solid blue;
+}
+
+rect {
+	fill: red;
+}
