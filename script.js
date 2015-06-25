@@ -17,7 +17,6 @@ var svg = d3.select('#responsiveContainer')
   .append('svg')
   .attr({
     'viewBox': "0 0 800 800",
-    'preserveAspectRatio': "xMinYMin meet"
   });
 
 svg.append('rect')
