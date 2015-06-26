@@ -68,8 +68,12 @@ function redraw() {
     return d.Id;
   }));
 
+
+//how does it know how to transition the transform?
   svg.selectAll('.x.axis')
-  .call(xAxis);
+    .transition()
+    .duration(1000)
+    .call(xAxis);
 
   var bars = svg.selectAll(".bar")
     .data(data, function(d) {
