@@ -32,16 +32,12 @@ var svg = d3.select('#responsiveContainer')
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var data = [];
-for (var i = 0; i < 5; i++) {
+for (var i = 0; i < 20; i++) {
   data.push({
     'Id': i,
     'Value': Math.floor(Math.random() * 20)
   });
 }
-
-data.sort(function(a, b) {
-  return d3.ascending(a.Value, b.Value);
-});
 
 
 xScale.domain(data.map(function(d) {
@@ -64,19 +60,23 @@ svg.append("g")
 
 
 function redraw() {
-  xScale.domain(data.map(function(d) {
+
+  var top = data.sort(function(a, b) {
+    return d3.descending(a.Value, b.Value);
+  }).slice(0, 10);
+
+  xScale.domain(top.map(function(d) {
     return d.Id;
   }));
 
 
-//how does it know how to transition the transform?
   svg.selectAll('.x.axis')
     .transition()
     .duration(1000)
     .call(xAxis);
 
   var bars = svg.selectAll(".bar")
-    .data(data, function(d) {
+    .data(top, function(d) {
       return d.Id;
     });
 
@@ -131,16 +131,30 @@ function redraw() {
         return height - yScale(d.Value);
       },
     });
+
+  bars.exit()
+    .transition()
+    .duration(500)
+    .attr({
+      'x': function(d) {
+        return xScale.range()[1];
+      },
+      "y": function(d) {
+        return yScale.range()[0];
+      },
+      "height": function(d) {
+        return 0;
+      },
+    })
+    .each('end', function() {
+      d3.select(this).remove();
+    });
 }
 
 var changeDataTimeout = setInterval(function() {
   for (var i = 0; i < data.length; i++) {
     data[i].Value = Math.floor(Math.random() * 20);
   }
-
-  data.sort(function(a, b) {
-    return d3.ascending(a.Value, b.Value);
-  });
 
   redraw()
 }, 5000);
