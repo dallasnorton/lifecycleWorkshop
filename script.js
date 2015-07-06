@@ -1,3 +1,6 @@
+var chartData = [];
+var chartDrawData = [];
+
 var margin = {
     top: 20,
     right: 20,
@@ -6,6 +9,7 @@ var margin = {
   },
   width = 1000 - margin.left - margin.right,
   height = 500 - margin.top - margin.bottom;
+
 
 var xScale = d3.scale.ordinal()
   .rangeRoundBands([0, width], .1, 1);
@@ -31,25 +35,19 @@ var svg = d3.select('#responsiveContainer')
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var data = [];
-for (var i = 0; i < 5; i++) {
-  data.push({
-    'Id': i,
-    'Value': Math.floor(Math.random() * 20)
-  });
-}
 
-data.sort(function(a, b) {
-  return d3.ascending(a.Value, b.Value);
-});
+chartData = generateData(20);
+
+sortData(chartData);
 
 
-xScale.domain(data.map(function(d) {
+xScale.domain(chartData.map(function(d) {
   return d.Id;
 }));
-yScale.domain([0, d3.max(data, function(d) {
+yScale.domain([0, d3.max(chartData, function(d) {
   return d.Value;
 })]);
+
 
 svg.append("g")
   .attr({
@@ -64,19 +62,21 @@ svg.append("g")
 
 
 function redraw() {
-  xScale.domain(data.map(function(d) {
+  // chartDrawData = chartData;
+  chartDrawData = chartData.slice(0, Math.floor(Math.random() * 15) + 5);
+
+  xScale.domain(chartDrawData.map(function(d) {
     return d.Id;
   }));
 
-
-//how does it know how to transition the transform?
   svg.selectAll('.x.axis')
     .transition()
     .duration(1000)
+    .delay(1000)
     .call(xAxis);
 
   var bars = svg.selectAll(".bar")
-    .data(data, function(d) {
+    .data(chartDrawData, function(d) {
       return d.Id;
     });
 
@@ -107,6 +107,7 @@ function redraw() {
     })
     .transition()
     .duration(1000)
+    .delay(1000)
     .attr({
       "y": function(d) {
         return yScale(d.Value);
@@ -118,6 +119,7 @@ function redraw() {
 
   bars
     .transition()
+    .delay(1000)
     .duration(1000)
     .attr({
       "width": xScale.rangeBand(),
@@ -131,18 +133,53 @@ function redraw() {
         return height - yScale(d.Value);
       },
     });
+
+  bars.exit()
+    .transition()
+    .duration(1000)
+    .attr({
+      "width": 0,
+      'transform': function(d) {
+        return 'translate(' + xScale.rangeBand() / 2 + ',0)';
+      }
+    })
+    .each('end', function() {
+      d3.select(this).remove();
+    });
 }
 
 var changeDataTimeout = setInterval(function() {
-  for (var i = 0; i < data.length; i++) {
-    data[i].Value = Math.floor(Math.random() * 20);
-  }
+  randomizeData(chartData);
 
-  data.sort(function(a, b) {
-    return d3.ascending(a.Value, b.Value);
-  });
+  sortData(chartData);
 
   redraw()
 }, 5000);
 
 redraw();
+
+
+function randomizeData(data) {
+  for (var i = 0; i < data.length; i++) {
+    data[i].Value = Math.floor(Math.random() * 20);
+  }
+}
+
+
+function generateData(length) {
+  var data = [];
+  for (var i = 0; i < length; i++) {
+    data.push({
+      'Id': i,
+      'Value': Math.floor(Math.random() * 20)
+    });
+  }
+
+  return data;
+}
+
+function sortData(data) {
+  data.sort(function(a, b) {
+    return d3.ascending(a.Value, b.Value);
+  });
+}
