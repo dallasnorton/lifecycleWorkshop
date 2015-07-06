@@ -1,6 +1,6 @@
 var chartData = [];
 var chartDrawData = [];
-var transitionDuration = 1000;
+var transitionDuration = 2000;
 
 var margin = {
     top: 20,
@@ -94,12 +94,12 @@ function redraw() {
       "height": 0,
     })
     .style({
-      'fill': 'red',
+      'fill': '#2ECC40',
     })
     .on('mouseover', function() {
       d3.select(this)
         .style({
-          'fill': '#BADA55',
+          'fill': '#01FF70',
         });
     })
     .on('mouseout', function() {
@@ -122,8 +122,8 @@ function redraw() {
 
   bars
     .transition()
-    .delay(transitionDuration)
     .duration(transitionDuration)
+    .delay(transitionDuration)
     .attr({
       "width": xScale.rangeBand(),
       'x': function(d) {
@@ -136,8 +136,13 @@ function redraw() {
         return height - yScale(d.Value);
       },
     })
-    .style({
-      'fill': 'steelblue',
+    .each('end', function() {
+      d3.select(this)
+        .transition()
+        .duration(transitionDuration)
+        .style({
+          'fill': '#0074D9',
+        });
     });
 
   bars.exit()
@@ -150,7 +155,7 @@ function redraw() {
       }
     })
     .style({
-      'fill': 'purple',
+      'fill': '#FF4136',
     })
     .each('end', function() {
       d3.select(this).remove();
