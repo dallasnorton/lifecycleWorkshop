@@ -1,5 +1,6 @@
 var chartData = [];
 var chartDrawData = [];
+var transitionDuration = 1000;
 
 var margin = {
     top: 20,
@@ -62,7 +63,6 @@ svg.append("g")
 
 
 function redraw() {
-  // chartDrawData = chartData;
   chartDrawData = chartData.slice(0, Math.floor(Math.random() * 15) + 5);
 
   xScale.domain(chartDrawData.map(function(d) {
@@ -71,8 +71,8 @@ function redraw() {
 
   svg.selectAll('.x.axis')
     .transition()
-    .duration(1000)
-    .delay(1000)
+    .duration(transitionDuration)
+    .delay(transitionDuration)
     .call(xAxis);
 
   var bars = svg.selectAll(".bar")
@@ -93,6 +93,9 @@ function redraw() {
       },
       "height": 0,
     })
+    .style({
+      'fill': 'red',
+    })
     .on('mouseover', function() {
       d3.select(this)
         .style({
@@ -106,8 +109,8 @@ function redraw() {
         });
     })
     .transition()
-    .duration(1000)
-    .delay(1000)
+    .duration(transitionDuration)
+    .delay(transitionDuration)
     .attr({
       "y": function(d) {
         return yScale(d.Value);
@@ -119,8 +122,8 @@ function redraw() {
 
   bars
     .transition()
-    .delay(1000)
-    .duration(1000)
+    .delay(transitionDuration)
+    .duration(transitionDuration)
     .attr({
       "width": xScale.rangeBand(),
       'x': function(d) {
@@ -132,16 +135,22 @@ function redraw() {
       "height": function(d) {
         return height - yScale(d.Value);
       },
+    })
+    .style({
+      'fill': 'steelblue',
     });
 
   bars.exit()
     .transition()
-    .duration(1000)
+    .duration(transitionDuration)
     .attr({
       "width": 0,
       'transform': function(d) {
         return 'translate(' + xScale.rangeBand() / 2 + ',0)';
       }
+    })
+    .style({
+      'fill': 'purple',
     })
     .each('end', function() {
       d3.select(this).remove();
@@ -154,7 +163,7 @@ var changeDataTimeout = setInterval(function() {
   sortData(chartData);
 
   redraw()
-}, 5000);
+}, transitionDuration * 3);
 
 redraw();
 
