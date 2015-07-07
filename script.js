@@ -37,7 +37,7 @@ setYScaleDomain(chartData);
 
 appendAxises();
 
-(function draw() {
+function draw() {
   var bars = svg.selectAll(".bar")
     .data(chartData);
 
@@ -66,8 +66,41 @@ appendAxises();
       "height": function(d) {
         return height - yScale(d.Value);
       },
+    });
+
+  bars
+    .transition()
+    .duration(transitionDuration)
+    .delay(transitionDuration)
+    .attr({
+      "width": xScale.rangeBand(),
+      'x': function(d) {
+        return xScale(d.Id);
+      },
+      "y": function(d) {
+        return yScale(d.Value);
+      },
+      "height": function(d) {
+        return height - yScale(d.Value);
+      },
     })
-})();
+    .each('end', function() {
+      d3.select(this)
+        .transition()
+        .duration(transitionDuration)
+        .style({
+          'fill': '#0074D9',
+        });
+    });
+};
+
+draw()
+
+var changeDataTimeout = setInterval(function() {
+  randomizeData(chartData);
+
+  draw();
+}, transitionDuration * 3);
 
 function appendAxises() {
   svg.append("g")
@@ -91,6 +124,12 @@ function setYScaleDomain(data) {
   yScale.domain([0, d3.max(data, function(d) {
     return d.Value;
   })]);
+}
+
+function randomizeData(data) {
+  for (var i = 0; i < data.length; i++) {
+    data[i].Value = Math.floor(Math.random() * 20);
+  }
 }
 
 function generateData(numberOfRows) {
