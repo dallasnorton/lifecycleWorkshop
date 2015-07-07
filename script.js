@@ -32,13 +32,23 @@ chartData = generateData(20);
       'x': function(d, i) {
         return i * 46;
       },
-      "y": 0,
-      "height": function(d) {
-        return d.Value * 10;
+      "y": function(d) {
+        return 400;
       },
+      "height": 0,
     })
     .style({
       'fill': '#2ECC40',
+    })
+    .transition()
+    .duration(transitionDuration)
+    .attr({
+      "y": function(d) {
+        return 400 - (d.Value * 10);
+      },
+      "height": function(d) {
+        return d.Value * 10;
+      },
     })
 })();
 
