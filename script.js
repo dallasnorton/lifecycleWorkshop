@@ -51,7 +51,9 @@ function draw() {
     .call(xAxis);
 
   var bars = svg.selectAll(".bar")
-    .data(chartData);
+    .data(chartData, function(d) {
+      return d.Id;
+    });
 
   bars.enter()
     .append("rect")
@@ -68,6 +70,18 @@ function draw() {
     })
     .style({
       'fill': '#2ECC40',
+    })
+    .on('mouseover', function() {
+      d3.select(this)
+        .style({
+          'fill': '#01FF70',
+        });
+    })
+    .on('mouseout', function() {
+      d3.select(this)
+        .style({
+          'fill': null,
+        });
     })
     .transition()
     .duration(transitionDuration)
