@@ -21,25 +21,7 @@ var svg = d3.select('#responsiveContainer')
 chartData = generateData(20);
 
 (function draw() {
-  var bars = svg.selectAll(".bar")
-    .data(chartData);
-
-  bars.enter()
-    .append("rect")
-    .attr({
-      "class": "bar",
-      "width": 40,
-      'x': function(d, i) {
-        return i * 46;
-      },
-      "y": 0,
-      "height": function(d) {
-        return d.Value * 10;
-      },
-    })
-    .style({
-      'fill': '#2ECC40',
-    })
+  // ADD CODE HERE
 })();
 
 
