@@ -1,23 +1,19 @@
 var chartData = [];
 var chartDrawData = [];
 var transitionDuration = 2000;
-
 var margin = {
-    top: 20,
-    right: 20,
-    bottom: 30,
-    left: 40
-  },
-  width = 1000 - margin.left - margin.right,
-  height = 500 - margin.top - margin.bottom;
-
+  top: 20,
+  right: 20,
+  bottom: 30,
+  left: 40
+};
+var width = 1000 - margin.left - margin.right;
+var height = 500 - margin.top - margin.bottom;
 
 var xScale = d3.scale.ordinal()
   .rangeRoundBands([0, width], .1, 1);
 var yScale = d3.scale.linear()
   .range([height, 0]);
-
-
 
 var xAxis = d3.svg.axis()
   .scale(xScale)
@@ -25,8 +21,6 @@ var xAxis = d3.svg.axis()
 var yAxis = d3.svg.axis()
   .scale(yScale)
   .orient("left");
-
-
 
 var svg = d3.select('#responsiveContainer')
   .append('svg')
@@ -36,33 +30,16 @@ var svg = d3.select('#responsiveContainer')
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
 chartData = generateData(20);
 
 sortData(chartData);
 
+setXScaleDomain(chartData);
+setYScaleDomain(chartData);
 
-xScale.domain(chartData.map(function(d) {
-  return d.Id;
-}));
-yScale.domain([0, d3.max(chartData, function(d) {
-  return d.Value;
-})]);
+appendAxises();
 
-
-svg.append("g")
-  .attr({
-    "class": "x axis",
-    "transform": "translate(0," + height + ")"
-  })
-  .call(xAxis);
-svg.append("g")
-  .attr("class", "y axis")
-  .call(yAxis);
-
-
-
-function redraw() {
+function draw() {
   chartDrawData = chartData.slice(0, Math.floor(Math.random() * 15) + 5);
 
   xScale.domain(chartDrawData.map(function(d) {
@@ -150,9 +127,6 @@ function redraw() {
     .duration(transitionDuration)
     .attr({
       "width": 0,
-      'transform': function(d) {
-        return 'translate(' + xScale.rangeBand() / 2 + ',0)';
-      }
     })
     .style({
       'fill': '#FF4136',
@@ -160,18 +134,41 @@ function redraw() {
     .each('end', function() {
       d3.select(this).remove();
     });
-}
+};
+
+draw()
 
 var changeDataTimeout = setInterval(function() {
   randomizeData(chartData);
 
   sortData(chartData);
 
-  redraw()
+  draw();
 }, transitionDuration * 3);
 
-redraw();
+function appendAxises() {
+  svg.append("g")
+    .attr({
+      "class": "x axis",
+      "transform": "translate(0," + height + ")"
+    })
+    .call(xAxis);
+  svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis);
+}
 
+function setXScaleDomain(data) {
+  xScale.domain(data.map(function(d) {
+    return d.Id;
+  }));
+}
+
+function setYScaleDomain(data) {
+  yScale.domain([0, d3.max(data, function(d) {
+    return d.Value;
+  })]);
+}
 
 function randomizeData(data) {
   for (var i = 0; i < data.length; i++) {
@@ -179,10 +176,9 @@ function randomizeData(data) {
   }
 }
 
-
-function generateData(length) {
+function generateData(numberOfRows) {
   var data = [];
-  for (var i = 0; i < length; i++) {
+  for (var i = 0; i < numberOfRows; i++) {
     data.push({
       'Id': i,
       'Value': Math.floor(Math.random() * 20)
