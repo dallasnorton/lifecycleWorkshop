@@ -32,12 +32,24 @@ var svg = d3.select('#responsiveContainer')
 
 chartData = generateData(20);
 
+sortData(chartData);
+
 setXScaleDomain(chartData);
 setYScaleDomain(chartData);
 
 appendAxises();
 
 function draw() {
+  xScale.domain(chartData.map(function(d) {
+    return d.Id;
+  }));
+
+  svg.selectAll('.x.axis')
+    .transition()
+    .duration(transitionDuration)
+    .delay(transitionDuration)
+    .call(xAxis);
+
   var bars = svg.selectAll(".bar")
     .data(chartData);
 
@@ -99,6 +111,8 @@ draw()
 var changeDataTimeout = setInterval(function() {
   randomizeData(chartData);
 
+  sortData(chartData);
+
   draw();
 }, transitionDuration * 3);
 
@@ -142,4 +156,10 @@ function generateData(numberOfRows) {
   }
 
   return data;
+}
+
+function sortData(data) {
+  data.sort(function(a, b) {
+    return d3.ascending(a.Value, b.Value);
+  });
 }
