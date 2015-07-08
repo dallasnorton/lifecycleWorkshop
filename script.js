@@ -37,18 +37,23 @@ sortData(chartData);
 setXScaleDomain(chartData);
 setYScaleDomain(chartData);
 
-appendAxises();
+appendAxes();
 
 function draw() {
-  xScale.domain(chartData.map(function(d) {
-    return d.Id;
-  }));
+  setXScaleDomain(chartData);
+  setYScaleDomain(chartData);
 
   svg.selectAll('.x.axis')
     .transition()
     .duration(transitionDuration)
     .delay(transitionDuration)
     .call(xAxis);
+
+  svg.selectAll('.y.axis')
+    .transition()
+    .duration(transitionDuration)
+    .delay(transitionDuration)
+    .call(yAxis);
 
   var bars = svg.selectAll(".bar")
     .data(chartData, function(d) {
@@ -130,7 +135,7 @@ var changeDataTimeout = setInterval(function() {
   draw();
 }, transitionDuration * 3);
 
-function appendAxises() {
+function appendAxes() {
   svg.append("g")
     .attr({
       "class": "x axis",
