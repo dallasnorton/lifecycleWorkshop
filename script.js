@@ -35,7 +35,7 @@ chartData = generateData(20);
 setXScaleDomain(chartData);
 setYScaleDomain(chartData);
 
-appendAxises();
+appendAxes();
 
 function draw() {
   var bars = svg.selectAll(".bar")
@@ -102,7 +102,7 @@ var changeDataTimeout = setInterval(function() {
   draw();
 }, transitionDuration * 3);
 
-function appendAxises() {
+function appendAxes() {
   svg.append("g")
     .attr({
       "class": "x axis",
